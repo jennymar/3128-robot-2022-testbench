@@ -11,7 +11,7 @@ public class Constants {
         public static final double FALCON_ENCODER_RESOLUTION = 2048;
         public static final double SPARK_ENCODER_RESOLUTION = 42;
         public static final double FALCON_NUp100MS_TO_RPM = 10 * 60 / FALCON_ENCODER_RESOLUTION; // (sensor units per 100 ms to rpm)
-
+        public static final double ENCODER_TO_RPM = 10*60/FALCON_ENCODER_RESOLUTION; // (sensor units per 100 ms to rpm)
     }
 
     public static class DriveConstants {
@@ -64,5 +64,18 @@ public class Constants {
 
         public static final int ALIGN_PLATEAU_COUNT = 10; //Number of checks at correct RPM to shoot
         
+    }
+
+    public static class ShooterConstants {
+        public static final int LEFT_SHOOTER_ID = 6; 
+        public static final double SHOOTER_PID_kP = 1.24e-7;
+        public static final double SHOOTER_PID_kI = 0;
+        public static final double SHOOTER_PID_kD = 0;
+
+        public static final int PLATEAU_COUNT = 25;
+
+        public static final double RPM_THRESHOLD_PERCENT = 0.05;
+        public static final double RPM_THRESHOLD_PERCENT_MAX = 0.06;
+        public static final double TIME_TO_MAX_THRESHOLD = 8;
     }
 }
