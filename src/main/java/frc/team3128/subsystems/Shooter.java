@@ -144,13 +144,14 @@ public class Shooter extends NAR_PIDSubsystem{
         percentOutput = (percentOutput > 1) ? 1 : ((percentOutput < -1) ? -1 : percentOutput);
         percentOutput = (setpoint == 0) ? 0 : percentOutput;
 
-        m_leftShooter.set(ControlMode.PercentOutput, -percentOutput);
+        m_leftShooter.set(ControlMode.PercentOutput, percentOutput);
         //m_rightShooter.set(ControlMode.PercentOutput, -percentOutput);
 
         //Log.info("Shooter","percentOutput: " + percentOutput);
         //Log.info("Shooter","RPM: " + getMeasurement());
         //Log.info("Shooter", "setpoint " + setpoint);
         //Log.info("Shooter", "shooterState " + shooterState.shooterRPM);
+        SmartDashboard.putNumber("Shooter Encoder", getMeasurement());
     }
 
     @Override
@@ -164,7 +165,6 @@ public class Shooter extends NAR_PIDSubsystem{
         //m_rightShooter.setQuadSimVelocity(m_shooterSim.getAngularVelocityRadPerSec() * Constants.ShooterConstants.SHOOTER_RADIUS_METERS);
     
         SmartDashboard.putNumber("test", m_leftShooter.getMotorOutputVoltage()); 
-        SmartDashboard.putNumber("Expected Shooter Speed (rpm)", m_shooterSim.getAngularVelocityRadPerSec()); //* 60 / (2*Math.PI) );
         SmartDashboard.putString("pogger", String.valueOf(m_shooterSim.getAngularVelocityRadPerSec()));
         SmartDashboard.putNumber("shooter RPM", m_shooterSim.getAngularVelocityRadPerSec() * 60 / (2*Math.PI));
         

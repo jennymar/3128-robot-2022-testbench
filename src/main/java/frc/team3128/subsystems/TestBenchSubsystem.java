@@ -11,7 +11,7 @@ public class TestBenchSubsystem extends SubsystemBase{
     public TestBenchSubsystem(){}  
 
     public void drive(){
-        motor.set(.5);
+        //motor.set(.5);
     }
 
     public void stop(){

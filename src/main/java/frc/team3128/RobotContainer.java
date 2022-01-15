@@ -54,21 +54,19 @@ public class RobotContainer {
     }   
 
     private void configureButtonBindings() {
-        SmartDashboard.putString("cog", " ");
+        //SmartDashboard.putString("cog", " ");
         //m_rightStick.getButton(1).whenActive(new RunCommand(testBenchSubsystem::drive,testBenchSubsystem));
         //m_rightStick.getButton(1).whenReleased(new RunCommand(testBenchSubsystem::stop,testBenchSubsystem));
 
-        //Shoot shootCmd = new Shoot(shooter, Shooter.ShooterState.LAUNCHPAD);
+        Shoot shootCmd = new Shoot(shooter, Shooter.ShooterState.LAUNCHPAD);
 
-        m_rightStick.getButton(2).whenActive(new SequentialCommandGroup(new PrintCommand("button 2 active"), 
-                                                                        new Shoot(shooter, Shooter.ShooterState.LAUNCHPAD)));
-        // m_rightStick.getButton(2).whenReleased(new RunCommand(() -> {
-        //     shootCmd.end(false);
+        m_rightStick.getButton(2).whenActive(new SequentialCommandGroup(new PrintCommand("button 2 active"), shootCmd));
+        m_rightStick.getButton(2).whenReleased(new RunCommand(shooter::stopShoot, shooter));
+    
+
+        // m_rightStick.getButton(1).whenActive(new RunCommand(() -> {
+        //     SmartDashboard.putString("cog", "potato - sohan");
         // }));
-
-        m_rightStick.getButton(1).whenActive(new RunCommand(() -> {
-            SmartDashboard.putString("cog", "potato - sohan");
-        }));
 
     }
 
