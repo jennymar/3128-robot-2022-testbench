@@ -3,17 +3,21 @@ package frc.team3128.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import frc.team3128.Constants;
+import frc.team3128.Robot;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.math.controller.PIDController;
+
 import frc.team3128.common.NAR_PIDSubsystem;
 import frc.team3128.common.hardware.motor.NAR_TalonSRX;
+import frc.team3128.common.utility.Log;
 
 public class Shooter extends NAR_PIDSubsystem{
     
     public enum ShooterState {
 
         OFF(0),
-        LAUNCHPAD(0),
+        LAUNCHPAD(4800),
         UPPERHUB(0),
         LOWERHUB(0);
 
@@ -35,8 +39,20 @@ public class Shooter extends NAR_PIDSubsystem{
     private double time = 0, preTime = 0;
     private double thresholdPercent = Constants.ShooterConstants.RPM_THRESHOLD_PERCENT;
 
+    private FlywheelSim m_shooterSim;
+
+
     public Shooter() {
         super(new PIDController(Constants.ShooterConstants.SHOOTER_PID_kP, Constants.ShooterConstants.SHOOTER_PID_kI, Constants.ShooterConstants.SHOOTER_PID_kD), Constants.ShooterConstants.PLATEAU_COUNT);
+    
+        //Robot is a simulation
+        if(Robot.isSimulation()){
+            m_shooterSim = new FlywheelSim(
+                Constants.ShooterConstants.SHOOTER_CHAR,
+                Constants.ShooterConstants.SHOOTER_GEARBOX,
+                Constants.ShooterConstants.SHOOTER_GEARING 
+            );
+        }
     }
 
     public static synchronized Shooter getInstance() {
@@ -78,6 +94,8 @@ public class Shooter extends NAR_PIDSubsystem{
      * @param state Desired Shooter State
      */
     public void beginShoot(ShooterState state) {
+        Log.info("Shooter", "beginShoot");
+        Log.info("Shooter", "state: " + state.shooterRPM);
         setState(state);
         startPID();
     }
@@ -107,7 +125,7 @@ public class Shooter extends NAR_PIDSubsystem{
      */
     @Override
     protected void useOutput(double output, double setpoint) {
-        double voltageOutput = output + 0.0019;
+        double voltageOutput = output + 0.003*setpoint;
         double voltage = RobotController.getBatteryVoltage();
         double percentOutput = voltageOutput/voltage;
 
@@ -125,10 +143,26 @@ public class Shooter extends NAR_PIDSubsystem{
         percentOutput = (percentOutput > 1) ? 1 : ((percentOutput < -1) ? -1 : percentOutput);
         percentOutput = (setpoint == 0) ? 0 : percentOutput;
 
-        m_leftShooter.set(ControlMode.PercentOutput, percentOutput);
+        m_leftShooter.set(ControlMode.PercentOutput, -percentOutput);
         //m_rightShooter.set(ControlMode.PercentOutput, -percentOutput);
 
+        Log.info("Shooter","percentOutput: " + percentOutput);
+        Log.info("Shooter","RPM: " + getMeasurement());
+    }
 
+    @Override
+    public void simulationPeriodic() {
+        m_shooterSim.setInput(
+            m_leftShooter.getMotorOutputVoltage()
+        );  
+        m_shooterSim.update(0.02);    
+        
+        m_leftShooter.setQuadSimVelocity(m_shooterSim.getAngularVelocityRadPerSec() * Constants.ShooterConstants.SHOOTER_RADIUS_METERS);
+        //m_rightShooter.setQuadSimVelocity(m_shooterSim.getAngularVelocityRadPerSec() * Constants.ShooterConstants.SHOOTER_RADIUS_METERS);
+    }
+
+    public void setMotorVelocity(int rpm) {
+        //TODO needs characterization
     }
 }
 
