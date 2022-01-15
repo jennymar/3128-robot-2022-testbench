@@ -14,6 +14,7 @@ import frc.team3128.subsystems.NAR_Drivetrain;
 import frc.team3128.subsystems.TestBenchSubsystem;
 import frc.team3128.subsystems.Shooter.ShooterState;
 import frc.team3128.subsystems.Shooter;
+import frc.team3128.common.utility.Log;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -53,14 +54,20 @@ public class RobotContainer {
     }   
 
     private void configureButtonBindings() {
+        SmartDashboard.putString("cog", " ");
         //m_rightStick.getButton(1).whenActive(new RunCommand(testBenchSubsystem::drive,testBenchSubsystem));
         //m_rightStick.getButton(1).whenReleased(new RunCommand(testBenchSubsystem::stop,testBenchSubsystem));
 
-        Shoot shootCmd = new Shoot(shooter, Shooter.ShooterState.LAUNCHPAD);
+        //Shoot shootCmd = new Shoot(shooter, Shooter.ShooterState.LAUNCHPAD);
 
-        m_rightStick.getButton(2).whenActive(new SequentialCommandGroup(new PrintCommand("button 2 active"), shootCmd));
-        m_rightStick.getButton(2).whenReleased(new RunCommand(() -> {
-            shootCmd.end(false);
+        m_rightStick.getButton(2).whenActive(new SequentialCommandGroup(new PrintCommand("button 2 active"), 
+                                                                        new Shoot(shooter, Shooter.ShooterState.LAUNCHPAD)));
+        // m_rightStick.getButton(2).whenReleased(new RunCommand(() -> {
+        //     shootCmd.end(false);
+        // }));
+
+        m_rightStick.getButton(1).whenActive(new RunCommand(() -> {
+            SmartDashboard.putString("cog", "potato - sohan");
         }));
 
     }

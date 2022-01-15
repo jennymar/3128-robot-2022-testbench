@@ -6,6 +6,7 @@ import frc.team3128.Constants;
 import frc.team3128.Robot;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.controller.PIDController;
 
 import frc.team3128.common.NAR_PIDSubsystem;
@@ -84,8 +85,8 @@ public class Shooter extends NAR_PIDSubsystem{
      */
     public void startPID() {
         thresholdPercent = Constants.ShooterConstants.RPM_THRESHOLD_PERCENT;
+        super.setSetpoint(shooterState.shooterRPM);  
         super.startPID();
-        super.setSetpoint(shooterState.shooterRPM);
         getController().setTolerance(Constants.ShooterConstants.RPM_THRESHOLD_PERCENT * shooterState.shooterRPM);
     }
 
@@ -146,8 +147,10 @@ public class Shooter extends NAR_PIDSubsystem{
         m_leftShooter.set(ControlMode.PercentOutput, -percentOutput);
         //m_rightShooter.set(ControlMode.PercentOutput, -percentOutput);
 
-        Log.info("Shooter","percentOutput: " + percentOutput);
-        Log.info("Shooter","RPM: " + getMeasurement());
+        //Log.info("Shooter","percentOutput: " + percentOutput);
+        //Log.info("Shooter","RPM: " + getMeasurement());
+        //Log.info("Shooter", "setpoint " + setpoint);
+        //Log.info("Shooter", "shooterState " + shooterState.shooterRPM);
     }
 
     @Override
@@ -159,6 +162,13 @@ public class Shooter extends NAR_PIDSubsystem{
         
         m_leftShooter.setQuadSimVelocity(m_shooterSim.getAngularVelocityRadPerSec() * Constants.ShooterConstants.SHOOTER_RADIUS_METERS);
         //m_rightShooter.setQuadSimVelocity(m_shooterSim.getAngularVelocityRadPerSec() * Constants.ShooterConstants.SHOOTER_RADIUS_METERS);
+    
+        SmartDashboard.putNumber("test", m_leftShooter.getMotorOutputVoltage()); 
+        SmartDashboard.putNumber("Expected Shooter Speed (rpm)", m_shooterSim.getAngularVelocityRadPerSec()); //* 60 / (2*Math.PI) );
+        SmartDashboard.putString("pogger", String.valueOf(m_shooterSim.getAngularVelocityRadPerSec()));
+        SmartDashboard.putNumber("shooter RPM", m_shooterSim.getAngularVelocityRadPerSec() * 60 / (2*Math.PI));
+        
+
     }
 
     public void setMotorVelocity(int rpm) {
